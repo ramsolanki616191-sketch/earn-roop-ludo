@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EARN RooP LUDO</title>
+<style>
+:root{--bg:#090909;--panel:#151515;--panel2:#202020;--red:#e32636;--red2:#a81020;--muted:#aaa;--line:#333;--green:#36c98b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,Arial,sans-serif}
+header{position:sticky;top:0;background:#0d0d0df2;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;z-index:5}
+.brand{font-weight:900;letter-spacing:1px}.brand span{color:var(--red)}.pill{border:1px solid #55212a;color:#ff7883;border-radius:30px;padding:6px 10px;font-size:12px}
+main{max-width:980px;margin:auto;padding:20px 14px 80px}.hero{background:linear-gradient(135deg,#290b10,#121212 65%);border:1px solid #61202a;border-radius:18px;padding:24px;margin-bottom:18px}
+h1{font-size:clamp(27px,6vw,42px);margin:0 0 8px}.sub{color:#c5c5c5;line-height:1.5}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}.card h2{font-size:18px;margin:0 0 12px}
+.btn{border:0;border-radius:11px;padding:13px 15px;background:var(--red);color:#fff;font-weight:800;cursor:pointer;width:100%;font-size:14px}
+.btn.secondary{background:#292929;border:1px solid #444}.btn.outline{background:transparent;border:1px solid var(--red);color:#ff7c86}
+input,select{width:100%;background:#0c0c0c;color:white;border:1px solid #444;border-radius:10px;padding:13px;margin:6px 0 12px;font-size:15px}
+label{font-size:12px;color:#bbb}.muted{color:var(--muted);font-size:13px}.stat{font-size:24px;font-weight:900;color:#ff6672}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.tabs{display:flex;gap:8px;overflow:auto;margin:16px 0}.tab{white-space:nowrap;padding:10px 14px;border-radius:30px;border:1px solid #444;background:#171717;color:#ddd;cursor:pointer}.tab.active{background:#421018;border-color:var(--red);color:#fff}
+.hidden{display:none!important}.tableitem{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #383838;background:#111;border-radius:12px;padding:12px;margin:9px 0}.tableitem strong{display:block}.tableitem small{color:#aaa}.smallbtn{background:#a81727;color:white;border:0;border-radius:9px;padding:10px 13px;font-weight:800}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:330px;margin:12px auto}.cell{aspect-ratio:1;background:#242424;border:1px solid #555;border-radius:5px;display:grid;place-items:center;font-size:11px}.cell.red{background:#53151d}.cell.green{background:#164b38}.cell.blue{background:#173e59}.cell.yellow{background:#625018}
+.notice{background:#241217;border:1px solid #61202a;border-radius:10px;padding:12px;color:#ffdce0;font-size:13px}
+.plan{border:1px solid #444;border-radius:14px;padding:14px;background:#111}.plan h3{margin:0 0 8px}.price{font-size:25px;font-weight:900}.tag{font-size:11px;color:#ff8b94}
+footer{text-align:center;color:#777;font-size:11px;padding:20px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.hero{padding:19px}.tableitem{align-items:flex-start}.tableitem .smallbtn{padding:9px}}
+</style>
+</head>
+<body>
+<header><div class="brand">EARN <span>RooP</span> LUDO</div><div class="pill" id="status">GUEST MODE</div></header>
+<main>
+<section id="login" class="card">
+ <div class="hero"><h1>अपना गेम शुरू करो.</h1><div class="sub">EARN RooP LUDO में आपका स्वागत है। मोबाइल नंबर से लॉगिन करें।</div></div>
+ <h2>Mobile Login</h2><label>मोबाइल नंबर</label><input id="phone" inputmode="numeric" maxlength="10" placeholder="10 अंकों का मोबाइल नंबर">
+ <div id="recaptcha-container"></div>
+ <button class="btn" id="sendOtpBtn" onclick="sendOtp()">SEND OTP</button>
+ <div id="otpbox" class="hidden"><label>SMS से मिला 6 अंकों का OTP</label><input id="otp" inputmode="numeric" maxlength="6" placeholder="6 अंकों का OTP"><button class="btn" id="verifyOtpBtn" onclick="verifyOtp()">VERIFY OTP</button></div>
+ <p class="muted" id="authMessage">Firebase API key और App ID जोड़ने के बाद असली SMS OTP काम करेगा।</p>
+</section>
+<section id="app" class="hidden">
+ <div class="hero"><div class="row"><div><div class="tag">WELCOME BACK</div><h1 id="welcome">Player</h1><div class="sub">Player ID: <b id="pid">ER-0001</b></div></div><div class="pill">BLACK × RED</div></div></div>
+ <div class="grid">
+  <div class="card"><div class="muted">GAME POINTS · DEMO ONLY</div><div class="stat" id="points">0 RP</div><div class="muted">गैर-नकद गेम पॉइंट्स</div></div>
+  <div class="card"><div class="muted">MEMBERSHIP</div><div class="stat" style="font-size:20px">FREE</div><div class="muted">योजना चुनने के लिए नीचे देखें</div></div>
+ </div>
+ <div class="tabs">
+  <button class="tab active" onclick="showTab('lobby',this)">LOBBY</button>
+  <button class="tab" onclick="showTab('wallet',this)">WALLET</button>
+  <button class="tab" onclick="showTab('plans',this)">SUBSCRIPTION</button>
+  <button class="tab" onclick="showTab('admin',this)">ADMIN DEMO</button>
+ </div>
+ <section id="lobby" class="tabpane">
+  <div class="grid">
+   <div class="card"><h2>NEW TABLE</h2><label>PLEASE ENTER TABLE NAME</label><input id="tablename" placeholder="आपका प्रोफाइल नाम">
+    <label>PLAYER MODE</label><select id="mode"><option>2 Players</option><option>4 Players</option></select>
+    <label>GAME POINTS (NON-REDEEMABLE)</label><select id="tablepoints"><option>100 RP</option><option>500 RP</option><option>1000 RP</option></select>
+    <label>TABLE TYPE</label><select id="privacy"><option>Public</option><option>Private</option></select>
+    <button class="btn" onclick="createTable()">SUBMIT TABLE</button>
+    <p class="muted">टेबल पॉइंट्स केवल डेमो गेम स्कोर हैं; इनका नकद मूल्य या withdrawal नहीं है।</p>
+   </div>
+   <div class="card"><h2>JOIN TABLE</h2><div class="muted">दूसरे खिलाड़ियों की सार्वजनिक टेबल यहाँ दिखेंगी।</div><div id="tables"><div class="notice">अभी कोई टेबल उपलब्ध नहीं है। पहली टेबल आप बनाइए।</div></div></div>
+  </div>
+  <div id="match" class="card hidden"><div class="row"><h2>LOBBY MATCH</h2><span class="pill" id="matchstate">WAITING</span></div><p id="matchtext" class="muted">Admin approval का इंतज़ार है।</p><div class="board" id="board"></div><button class="btn secondary" onclick="rollDemo()">ROLL DICE · DEMO</button><p id="dice" class="muted">पासा अभी नहीं चला है।</p></div>
+ </section>
+ <section id="wallet" class="tabpane hidden"><div class="card"><h2>MY WALLET</h2><div class="stat" id="walletpoints">0 RP</div><p class="muted">यह डेमो बैलेंस गैर-नकद और non-redeemable है। कोई Deposit या Cash Withdrawal उपलब्ध नहीं है।</p><button class="btn secondary" onclick="alert('Support chat का डेमो: वास्तविक Admin Chat अभी कनेक्ट नहीं है।')">CONTACT ADMIN</button></div></section>
+ <section id="plans" class="tabpane hidden"><div class="grid">
+  <div class="plan"><div class="tag">PRO</div><div class="price">₹99</div><b>100 RP demo points</b><p class="muted">विज्ञापन दिखेंगे</p><button class="btn secondary" onclick="alert('Demo only: payment gateway अभी कनेक्ट नहीं है।')">SELECT PRO</button></div>
+  <div class="plan"><div class="tag">PREMIUM</div><div class="price">₹499</div><b>500 RP demo points</b><p class="muted">विज्ञापन दिखेंगे</p><button class="btn secondary" onclick="alert('Demo only: payment gateway अभी कनेक्ट नहीं है।')">SELECT PREMIUM</button></div>
+  <div class="plan"><div class="tag">MAX</div><div class="price">₹999</div><b>Points: Admin-configured</b><p class="muted">विज्ञापन नहीं दिखेंगे</p><button class="btn secondary" onclick="alert('Demo only: payment gateway अभी कनेक्ट नहीं है।')">SELECT MAX</button></div>
+ </div><p class="muted">प्लान कार्ड अभी केवल UI प्रीव्यू हैं। पॉइंट्स गैर-नकद हैं और मैच में दाँव या कैश-आउट के लिए नहीं हैं।</p></section>
+ <section id="admin" class="tabpane hidden"><div class="card"><h2>ADMIN REVIEW · DEMO</h2><div class="notice">यह स्क्रीन केवल इंटरफेस प्रीव्यू है। वास्तविक Admin authentication और server-side approval अभी नहीं जुड़े हैं।</div><div id="requests" class="muted">अभी कोई Join Request नहीं है।</div></div></section>
+</section>
+<footer>EARΝ RooP LUDO · Frontend prototype · No real payments, SMS, multiplayer server or cash-out</footer>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
+  authDomain: "earn-roop-ludo.firebaseapp.com",
+  projectId: "earn-roop-ludo",
+  appId: "PASTE_YOUR_FIREBASE_APP_ID"
+};
+let firebaseReady=false, confirmationResult=null, recaptchaVerifier=null;
+try {
+  if (!firebaseConfig.apiKey.startsWith("PASTE_") && !firebaseConfig.appId.startsWith("PASTE_")) {
+    firebase.initializeApp(firebaseConfig); firebaseReady=true;
+  }
+} catch(e) { console.error(e); }
+let playerName='';let tables=[];let requests=[];let activeTable=null;let diceTurn=0;
+function authMsg(t){document.getElementById('authMessage').textContent=t;}
+async function sendOtp(){
+  const p=document.getElementById('phone').value.trim();
+  if(!/^[6-9]\d{9}$/.test(p)){authMsg('सही 10 अंकों का भारतीय मोबाइल नंबर डालें।');return;}
+  if(!firebaseReady){authMsg('Firebase API key और App ID अभी कोड में जोड़ने बाकी हैं।');return;}
+  const btn=document.getElementById('sendOtpBtn');btn.disabled=true;authMsg('reCAPTCHA जाँच हो रही है…');
+  try{
+    if(!recaptchaVerifier) recaptchaVerifier=new firebase.auth.RecaptchaVerifier('recaptcha-container',{size:'invisible'});
+    await recaptchaVerifier.render();
+    confirmationResult=await firebase.auth().signInWithPhoneNumber('+91'+p,recaptchaVerifier);
+    document.getElementById('otpbox').classList.remove('hidden');authMsg('OTP SMS से भेज दिया गया है।');
+  }catch(e){authMsg('OTP नहीं भेजा गया: '+(e.message||e.code));if(recaptchaVerifier){try{await recaptchaVerifier.clear();}catch(_){}recaptchaVerifier=null;}}
+  finally{btn.disabled=false;}
+}
+async function verifyOtp(){
+  const code=document.getElementById('otp').value.trim();
+  if(!confirmationResult){authMsg('पहले SEND OTP दबाएँ।');return;}
+  if(!/^\d{6}$/.test(code)){authMsg('6 अंकों का OTP डालें।');return;}
+  const btn=document.getElementById('verifyOtpBtn');btn.disabled=true;
+  try{
+    const result=await confirmationResult.confirm(code), user=result.user;
+    const p=(user.phoneNumber||'').replace(/^\+91/,'');playerName='Player'+p.slice(-4);
+    document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden');
+    document.getElementById('status').textContent='LOGGED IN';document.getElementById('welcome').textContent=playerName;
+    document.getElementById('pid').textContent='ER-'+user.uid.slice(0,6).toUpperCase();
+    document.getElementById('tablename').value=playerName;document.getElementById('walletpoints').textContent='0 RP';
+  }catch(e){authMsg('OTP गलत या एक्सपायर हो गया: '+(e.message||e.code));}
+  finally{btn.disabled=false;}
+}
+function showTab(id,el){document.querySelectorAll('.tabpane').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active')}
+function createTable(){let name=document.getElementById('tablename').value.trim()||playerName;if(!name){alert('पहले लॉगिन करें।');return}let t={id:'T'+String(Date.now()).slice(-5),name,owner:playerName,mode:document.getElementById('mode').value,points:document.getElementById('tablepoints').value,privacy:document.getElementById('privacy').value,state:'Waiting'};tables.unshift(t);renderTables();alert('डेमो टेबल बन गई: '+t.id)}
+function renderTables(){let el=document.getElementById('tables');let publicTables=tables.filter(t=>t.privacy==='Public'&&t.owner!==playerName);if(!publicTables.length){el.innerHTML='<div class="notice">दूसरे खिलाड़ियों की सार्वजनिक टेबल यहाँ दिखाई देंगी। इस डेमो में आप अपनी बनाई टेबल को Admin Demo में देख सकते हैं।</div>';return}el.innerHTML=publicTables.map(t=>`<div class="tableitem"><div><strong>${t.name}</strong><small>${t.mode} · ${t.points} · ${t.id}</small></div><button class="smallbtn" onclick="joinTable('${t.id}')">JOIN</button></div>`).join('')}
+function joinTable(id){let t=tables.find(x=>x.id===id);if(!t)return;requests.unshift({id:'R'+Date.now(),table:id,player:playerName,owner:t.owner,state:'Pending'});document.getElementById('match').classList.remove('hidden');document.getElementById('matchtext').textContent='Join request भेज दी गई है। Admin approval का इंतज़ार है।';document.getElementById('matchstate').textContent='PENDING';renderRequests();alert('डेमो: Admin को Join Request दिखाई देगी।')}
+function renderRequests(){let el=document.getElementById('requests');if(!requests.length){el.textContent='अभी कोई Join Request नहीं है।';return}el.innerHTML=requests.map(r=>`<div class="tableitem"><div><strong>${r.player} → ${r.table}</strong><small>${r.state}</small></div><button class="smallbtn" onclick="approve('${r.id}')">APPROVE</button></div>`).join('')}
+function approve(id){let r=requests.find(x=>x.id===id);if(!r)return;r.state='Approved';document.getElementById('matchstate').textContent='APPROVED';let n=10;document.getElementById('matchtext').textContent='Admin approved. Match starts in '+n+' seconds.';let timer=setInterval(()=>{n--;document.getElementById('matchtext').textContent='Match starts in '+n+' seconds.';if(n<=0){clearInterval(timer);document.getElementById('matchstate').textContent='MATCH DEMO';document.getElementById('matchtext').textContent='Demo board ready. Real-time multiplayer server is not connected.';drawBoard()}},1000);renderRequests()}
+function drawBoard(){let el=document.getElementById('board');el.innerHTML='';for(let i=0;i<25;i++){let d=document.createElement('div');d.className='cell '+(i%5===0?'red':i%5===1?'green':i%5===2?'blue':i%5===3?'yellow':'');d.textContent=i%6===0?'●':'';el.appendChild(d)}}
+function rollDemo(){diceTurn++;let v=Math.floor(Math.random()*6)+1;document.getElementById('dice').textContent='डेमो पासा: '+v+' · Turn '+diceTurn+' (यह असली multiplayer gameplay नहीं है)'}
+</script>
+</body></html>
